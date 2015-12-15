@@ -6,15 +6,7 @@ import pandas as pd
 import numpy as np
 from osgeo import gdal
 
-def calcET():
-    #get ET values
-    inData = r'C:\Users\khafe\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\ET\Master_Resampled.csv'
-    df_et = pd.DataFrame.from_csv(inData)
-
-    #set raster paths
-    freq_path = r'C:\Users\khafe\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\Raster\freqwet_10m.tif'
-    dep_path = r'C:\Users\khafe\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\Raster\ponddepth_10m_580.tif'
-
+def calcET(df_et, freq_path, dep_path, pond=True):
     freqDS = gdal.Open(freq_path, gdal.GA_ReadOnly)
     depDS = gdal.Open(dep_path, gdal.GA_ReadOnly)
     freq_band = freqDS.GetRasterBand(1)
@@ -42,11 +34,9 @@ def calcET():
 
         et_noPond.append(noPond)
         et_pond.append(pond)
-        print noPond, pond
 
-    print et_list
-    print len(et_list)
-    print geot[1]
-    print geot[5]
-    print toM3
+    if pond:
+        return et_pond
+    else:
+        return et_noPond
 

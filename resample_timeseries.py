@@ -52,3 +52,11 @@ def resampleTimeseries():
     df3.to_csv(oname, sep=',')
 
     return df3
+
+def getDf(filename):
+    df = pd.DataFrame.from_csv(filename)
+    return df
+
+def getDfDates(df):
+    list = df.tolist()
+    return list

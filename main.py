@@ -1,7 +1,27 @@
 import pond_rasters
+import resample_timeseries
+import matplotlib.pyplot as plt
 
 #--------------------------------------------------------
 #Execute Program
 #--------------------------------------------------------
 
-pond_rasters.calcET()
+filename = r'C:\Users\konrad\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\ET\Master_Resampled.csv'
+freq_path = r'C:\Users\konrad\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\Raster\freqwet_10m_BRAT100.tif'
+dep_path = r'C:\Users\konrad\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\Raster\ponddepth_10m_ACT.tif'
+dep_path1 = r'C:\Users\konrad\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\Raster\ponddepth_10m_BRAT50.tif'
+dep_path2 = r'C:\Users\konrad\Desktop\Classes\CEE_6400_Hydrology\FinalProject\Data\Raster\ponddepth_10m_BRAT100.tif'
+
+df_new = resample_timeseries.getDf(filename)
+df_start = df_new
+df_new['No Ponds'] = pond_rasters.calcET(df_start, freq_path, dep_path, False)
+df_new['Ponds Actual'] = pond_rasters.calcET(df_start, freq_path, dep_path, False)
+df_new['Ponds 50% BRAT'] = pond_rasters.calcET(df_start, freq_path, dep_path1, False)
+df_new['Ponds 100% BRAT'] = pond_rasters.calcET(df_start, freq_path, dep_path2, False)
+
+df_new.drop(df_new.columns[[0,1,2]], axis=1, inplace=True)
+
+df_new = df_new.cumsum()
+
+plt.figure; df_new.plot();
+plt.show()
