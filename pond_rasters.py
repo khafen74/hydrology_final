@@ -15,14 +15,16 @@ def calcET(df_et, freq_path, dep_path, pond):
     dep_data = dep_band.ReadAsArray()
 
     dry_data = np.where(freq_data > 0.0, 1, 0)
-    wet_data = np.where(dep_data > 0.0, 1, 0)
+    wet_data = np.where(dep_data > 0.0, dep_data, 0)
     nDry = np.count_nonzero(dry_data)
     nWet = np.count_nonzero(wet_data)
+    sumWet = np.sum(wet_data)
 
     geot = freqDS.GetGeoTransform()
     cellArea = abs(geot[1]*geot[5])
     cellArea_mm2 = cellArea*1000*1000
     toM3 = pow(10,-9)
+    wetVolume = sumWet*cellArea
 
     et_list = df_et.values.tolist()
     et_noPond = []
@@ -37,16 +39,13 @@ def calcET(df_et, freq_path, dep_path, pond):
         et_pond.append(pondVal)
         et_diff.append(pondVal-noPond)
 
-    print pond
+    print 'dry area: ' + str(nDry*cellArea) + ' wet area: ' + str(nWet*cellArea) + ' pond volume: ' + str(wetVolume) + ' et pond: ' + str(sum(et_pond)) + ' et no pond: ' + str(sum(et_noPond))
+
     if pond == 1:
-        print 'returning pond'
         return et_pond
     elif pond == 2:
-        print 'returning no pond'
         return et_noPond
     elif pond == 3:
-        print 'returning et_diff'
         return et_diff
     else:
         print 'not returning anything'
-
